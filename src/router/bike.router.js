@@ -1,64 +1,87 @@
-const express = require('express');
-const BicycleStatus = require("../model/BicycleStatus");
+const express = require("express");
+const Bike = require("../model/Bike");
 
-const routerBicycleStatus = express.Router();
+const routerBike = express.Router();
 
+routerBike.post("/", async (req, res) => {
+  try {
+    const { name, fk_brand, fk_bicycleStatus, color, description, image } =
+      req.body;
 
-
-
-routerBicycleStatus.post('/', async (req, res) => {
-    try {
-        const { type } = req.body;
-
-
-        if (!type) {
-            return res.status(400).json({ mensaje: "El campo 'type' es requerido." });
-        }
-
-        const newStatus = new BicycleStatus({ type });
-        await newStatus.save();
-        res.status(201).json(newStatus);
-    } catch (error) {
-        res.status(400).json({ mensaje: error.message });
+    if (!name || !fk_brand || !fk_bicycleStatus) {
+      return res.status(400).json({
+        mensaje:
+          "Los campos 'name', 'fk_brand' y 'fk_bicycleStatus' son requeridos.",
+      });
     }
+
+    const newBicycle = new Bike({
+      name,
+      fk_brand,
+      fk_bicycleStatus,
+      color,
+      description,
+      image,
+    });
+    await newBicycle.save();
+    res.status(201).json(newBicycle);
+  } catch (error) {
+    res.status(400).json({ mensaje: error.message });
+  }
 });
 
-// Obtener todos los estados
-routerBicycleStatus.get('/', async (req, res) => {
-    try {
-        const statuses = await BicycleStatus.find();
-        res.status(200).json(statuses);
-    } catch (error) {
-        res.status(500).json({ mensaje: error.message });
-    }
+routerBike.get("/", async (req, res) => {
+  try {
+    const bicycles = await Bike.find().populate("fk_brand fk_bicycleStatus");
+    res.status(200).json(bicycles);
+  } catch (error) {
+    res.status(500).json({ mensaje: error.message });
+  }
 });
 
-// Actualizar estado por ID
-routerBicycleStatus.put('/:id', async (req, res) => {
-    try {
-        const { type } = req.body;
-        const updatedStatus = await BicycleStatus.findByIdAndUpdate(req.params.id, { type }, { new: true });
-        if (!updatedStatus) {
-            return res.status(404).json({ mensaje: "Estado no encontrado" });
-        }
-        res.status(200).json(updatedStatus);
-    } catch (error) {
-        res.status(400).json({ mensaje: error.message });
+// Obtener bicicleta por ID
+routerBike.get("/:id", async (req, res) => {
+  try {
+    const bicycle = await Bike.findById(req.params.id).populate(
+      "fk_brand fk_bicycleStatus"
+    );
+    if (!bicycle) {
+      return res.status(404).json({ mensaje: "Bicicleta no encontrada" });
     }
+    res.status(200).json(bicycle);
+  } catch (error) {
+    res.status(500).json({ mensaje: error.message });
+  }
 });
 
-// Eliminar estado por ID
-routerBicycleStatus.delete('/:id', async (req, res) => {
-    try {
-        const deletedStatus = await BicycleStatus.findByIdAndDelete(req.params.id);
-        if (!deletedStatus) {
-            return res.status(404).json({ mensaje: "Estado no encontrado" });
-        }
-        res.status(204).send();
-    } catch (error) {
-        res.status(500).json({ mensaje: error.message });
+// Actualizar bicicleta por ID
+routerBike.put("/:id", async (req, res) => {
+  try {
+    const updatedBicycle = await Bike.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!updatedBicycle) {
+      return res.status(404).json({ mensaje: "Bicicleta no encontrada" });
     }
+    res.status(200).json(updatedBicycle);
+  } catch (error) {
+    res.status(400).json({ mensaje: error.message });
+  }
 });
 
-module.exports = routerBicycleStatus;
+// Eliminar bicicleta por ID
+routerBike.delete("/:id", async (req, res) => {
+  try {
+    const deletedBicycle = await Bike.findByIdAndDelete(req.params.id);
+    if (!deletedBicycle) {
+      return res.status(404).json({ mensaje: "Bicicleta no encontrada" });
+    }
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ mensaje: error.message });
+  }
+});
 
+module.exports = routerBike;
