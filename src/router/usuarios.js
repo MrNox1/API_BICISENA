@@ -46,23 +46,23 @@ routerUser.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
 
-
+        // Verificar si el usuario existe
         const existingUser = await Usuario.findOne({ username });
         if (!existingUser) {
             return res.status(404).json({ mensaje: "Usuario no encontrado" });
         }
 
-
+        // Comparar la contraseña proporcionada con la almacenada
         const isMatch = await existingUser.comparePass(password);
         if (!isMatch) {
             return res.status(401).json({ mensaje: "Contraseña incorrecta" });
         }
 
-
+        // Generar el token JWT
         const token = jwt.sign({ id: existingUser._id, username: existingUser.username }, JWT_SECRET, { expiresIn: '1h' });
 
-
-        res.status(200).json({ name: newUser, token });
+        // Responder con el usuario y el token
+        res.status(200).json({ usuario: existingUser, token });
     } catch (error) {
         console.error("Error al iniciar sesión:", error);
         res.status(500).json({ mensaje: error.message });
