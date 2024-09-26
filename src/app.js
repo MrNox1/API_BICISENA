@@ -5,6 +5,7 @@ const routerRole = require("./router/role.router.js");
 const routerBrand = require("./router/brand.router.js");
 const routerBicycleStatus = require("./router/bicycleStatus.router.js");
 const routerBicycle = require("./router/Bicycle.router.js");
+const routerStation = require("./router/station.js");
 
 const app = express();
 require("./db.js");
@@ -16,6 +17,7 @@ app.use("/role", routerRole);
 app.use("/brand", routerBrand);
 app.use("/status", routerBicycleStatus);
 app.use("/bicycle", routerBicycle);
+app.use("/station", routerStation);
 
 app.get("/", (req, res) => {
   return res.json({ mess: "hola" });
