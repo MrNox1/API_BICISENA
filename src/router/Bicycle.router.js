@@ -1,9 +1,9 @@
 const express = require("express");
-const Bike = require("../model/Bike");
+const Bicycle = require("../model/Bicycle");
 
-const routerBike = express.Router();
+const routerBicycle = express.Router();
 
-routerBike.post("/", async (req, res) => {
+routerBicycle.post("/", async (req, res) => {
   try {
     const { name, fk_brand, fk_bicycleStatus, color, description, image } =
       req.body;
@@ -15,7 +15,7 @@ routerBike.post("/", async (req, res) => {
       });
     }
 
-    const newBicycle = new Bike({
+    const newBicycle = new Bicycle({
       name,
       fk_brand,
       fk_bicycleStatus,
@@ -30,9 +30,9 @@ routerBike.post("/", async (req, res) => {
   }
 });
 
-routerBike.get("/", async (req, res) => {
+routerBicycle.get("/", async (req, res) => {
   try {
-    const bicycles = await Bike.find().populate("fk_brand fk_bicycleStatus");
+    const bicycles = await Bicycle.find().populate("fk_brand fk_bicycleStatus");
     res.status(200).json(bicycles);
   } catch (error) {
     res.status(500).json({ mensaje: error.message });
@@ -40,9 +40,9 @@ routerBike.get("/", async (req, res) => {
 });
 
 // Obtener bicicleta por ID
-routerBike.get("/:id", async (req, res) => {
+routerBicycle.get("/:id", async (req, res) => {
   try {
-    const bicycle = await Bike.findById(req.params.id).populate(
+    const bicycle = await Bicycle.findById(req.params.id).populate(
       "fk_brand fk_bicycleStatus"
     );
     if (!bicycle) {
@@ -55,9 +55,9 @@ routerBike.get("/:id", async (req, res) => {
 });
 
 // Actualizar bicicleta por ID
-routerBike.put("/:id", async (req, res) => {
+routerBicycle.put("/:id", async (req, res) => {
   try {
-    const updatedBicycle = await Bike.findByIdAndUpdate(
+    const updatedBicycle = await Bicycle.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true, runValidators: true }
@@ -72,9 +72,9 @@ routerBike.put("/:id", async (req, res) => {
 });
 
 // Eliminar bicicleta por ID
-routerBike.delete("/:id", async (req, res) => {
+routerBicycle.delete("/:id", async (req, res) => {
   try {
-    const deletedBicycle = await Bike.findByIdAndDelete(req.params.id);
+    const deletedBicycle = await Bicycle.findByIdAndDelete(req.params.id);
     if (!deletedBicycle) {
       return res.status(404).json({ mensaje: "Bicicleta no encontrada" });
     }
@@ -84,4 +84,4 @@ routerBike.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = routerBike;
+module.exports = routerBicycle;
