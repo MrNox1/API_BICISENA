@@ -8,6 +8,7 @@ const routerBicycle = require("./router/Bicycle.router.js");
 const routerStation = require("./router/station.js");
 const routerDiscount = require("./router/discount.router.js");
 const routerRentRegistration = require("./router/rentRegistration.router.js");
+const routerCycleRide = require("./router/CycleRidesRegistration.router.js");
 
 const app = express();
 require("./db.js");
@@ -21,7 +22,8 @@ app.use("/status", routerBicycleStatus);
 app.use("/bicycle", routerBicycle);
 app.use("/station", routerStation);
 app.use("/discount", routerDiscount);
-app.use("/registration", routerRentRegistration);
+app.use("/rentregs", routerRentRegistration);
+app.use("/rentcycle", routerCycleRide);
 
 app.get("/", (req, res) => {
   return res.json({ mess: "hola" });
