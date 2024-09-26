@@ -1,11 +1,7 @@
 const mongoose = require('mongoose');
 
 const bicycleStatusSchema = new mongoose.Schema({
-    idBicycleStatus: {
-        type: Number,
-        required: true,
-        unique: true,
-    },
+
     type: {
         type: String,
         required: true,

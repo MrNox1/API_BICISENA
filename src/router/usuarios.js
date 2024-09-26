@@ -46,8 +46,8 @@ routerUser.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        // Verificar si el usuario existe
-        const existingUser = await Usuario.findOne({ username });
+        // Verificar si el usuario existe y hacer populate para obtener el rol
+        const existingUser = await Usuario.findOne({ username }).populate('fk_rol');
         if (!existingUser) {
             return res.status(404).json({ mensaje: "Usuario no encontrado" });
         }
@@ -58,8 +58,16 @@ routerUser.post('/login', async (req, res) => {
             return res.status(401).json({ mensaje: "Contraseña incorrecta" });
         }
 
-        // Generar el token JWT
-        const token = jwt.sign({ id: existingUser._id, username: existingUser.username }, JWT_SECRET, { expiresIn: '1h' });
+        // Generar el token JWT con el nombre del rol
+        const token = jwt.sign(
+            {
+                id: existingUser._id,
+                username: existingUser.username,
+                rol: existingUser.fk_rol.nombre // Suponiendo que el modelo Rol tiene un campo "nombre"
+            },
+            JWT_SECRET,
+            { expiresIn: '1h' }
+        );
 
         // Responder con el usuario y el token
         res.status(200).json({ usuario: existingUser, token });
@@ -68,7 +76,6 @@ routerUser.post('/login', async (req, res) => {
         res.status(500).json({ mensaje: error.message });
     }
 });
-
 
 routerUser.get('/', async (req, res) => {
     try {
