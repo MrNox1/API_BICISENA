@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const bikeRideReservation = new mongoose.Schema({
+const paymentSchema = new mongoose.Schema({
   idCiclopase: {
     type: String,
     required: true,
@@ -23,6 +23,9 @@ const bikeRideReservation = new mongoose.Schema({
   },
 });
 
-const Payment = mongoose.model("Payment", paymentSchema);
+const bikeRideReservation = mongoose.model(
+  "bikeRideReservation",
+  paymentSchema
+);
 
-module.exports = Payment;
+module.exports = bikeRideReservation;
